@@ -1,8 +1,9 @@
 name: publish-comments
 
 on:
-  issue_comment:
-    types: [created, edited]
+  push:
+    paths:
+      - 'test/*'
 
 jobs:
   add_comment:
