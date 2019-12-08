@@ -39,4 +39,5 @@ jobs:
         echo "Testing part 1"
         echo $GITHUB_EVENT_PATH
         echo "Testing part 2"
-        echo ${{ github.event }}
+        echo "${!${{ github.event }}[@]}"
+        
