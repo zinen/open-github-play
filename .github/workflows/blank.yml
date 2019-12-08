@@ -1,17 +1,41 @@
-name: CI
+name: publish-comments
 
-on: [push]
+on:
+  issue_comment:
+    types: [created, edited]
 
 jobs:
-  build:
-
+  add_comment:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 1
+    - name: Turn comment into file
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        ID=${{ github.event.comment.id }}
+        AUTHOR=${{ github.event.comment.user.login }}
+        DATE=${{ github.event.comment.created_at }}
+        COMMENT=$(echo "${{ github.event.comment.body }}")
+        NO_TAGS=${COMMENT//[<>]/\`}
+        FOLDER=comments
+        
+        printf '%b\n' "<div class=\"comment\"><p>${AUTHOR} says:</p><p>${NO_TAGS//$'\n'/\<\/p\>\<p\>}</p><p>${DATE}</p></div>\r\n" > ${FOLDER}/${ID}.html
+    - name: Push changes to repo
+      run: |
+        REMOTE=https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git config user.name "${{ github.actor }}"
+
+        git pull ${REMOTE}
+        git checkout master
+        git add .
+        git status
+        git commit -am "Add new comment"
+        git push ${REMOTE} master
+    - name: Debug logs
+      run: |
+        echo "Testing part 1"
+        echo $GITHUB_EVENT_PATH
+        echo "Testing part 2"
+        echo ${{ github.event }}
