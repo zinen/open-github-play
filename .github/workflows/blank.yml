@@ -12,6 +12,12 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: 1
+    - name: Debug logs
+      run: |
+        echo "Testing part 1"
+        echo $GITHUB_EVENT_PATH
+        echo "Testing part 2"
+        echo "${!${{ github.event }}[@]}"
     - name: Turn comment into file
       run: |
         ID=${{ github.event.comment.id }}
@@ -34,10 +40,4 @@ jobs:
         git status
         git commit -am "Add new comment"
         git push ${REMOTE} master
-    - name: Debug logs
-      run: |
-        echo "Testing part 1"
-        echo $GITHUB_EVENT_PATH
-        echo "Testing part 2"
-        echo "${!${{ github.event }}[@]}"
         
