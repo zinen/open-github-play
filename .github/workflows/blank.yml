@@ -24,10 +24,10 @@ jobs:
         echo "${!${{ github.event }}[@]}"
     - name: Turn comment into file
       run: |
-        ID=${{ github.event.push.sender.node_id }}
-        AUTHOR=${{ github.event.push.pusher.name }}
-        DATE=${{ github.event.push.pushed_at }}
-        COMMENT=$(echo "${{ github.event.push.pusher.email }}")
+        ID=${{ github.event.sender.node_id }}
+        AUTHOR=${{ github.event.pusher.name }}
+        DATE=${{ github.event.pushed_at }}
+        COMMENT=$(echo "${{ github.event.pusher.email }}")
         NO_TAGS=${COMMENT//[<>]/\`}
         FOLDER=comments
         
