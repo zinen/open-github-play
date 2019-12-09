@@ -1,8 +1,9 @@
 name: publish-comments
 
 on:
-  issue_comment:
-    types: [created, edited]
+  push:
+    paths:
+    - 'test/*'
 
 jobs:
   add_comment:
@@ -23,10 +24,10 @@ jobs:
         echo "${!${{ github.event }}[@]}"
     - name: Turn comment into file
       run: |
-        ID=${{ github.event.comment.id }}
-        AUTHOR=${{ github.event.comment.user.login }}
-        DATE=${{ github.event.comment.created_at }}
-        COMMENT=$(echo "${{ github.event.comment.body }}")
+        ID=${{ github.event.push.sender.node_id }}
+        AUTHOR=${{ github.event.push.pusher.name }}
+        DATE=${{ github.event.push.pushed_at }}
+        COMMENT=$(echo "${{ github.event.push.pusher.email }}")
         NO_TAGS=${COMMENT//[<>]/\`}
         FOLDER=comments
         
